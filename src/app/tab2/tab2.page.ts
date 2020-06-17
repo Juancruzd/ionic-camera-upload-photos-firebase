@@ -10,15 +10,14 @@ import { AlertController} from '@ionic/angular';
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page{ 
+  //formulario para el registro del empleado
   Formcreateempleado: FormGroup;  
+  ///foto seleccionada para envio a almacenar
   selectedPhoto;
-  selectedPhotobase64="/assets/img/camera-icon.png"; 
-  currentImage;
-
-  constructor(public fb: FormBuilder,
-    private camera: Camera,
-    private crud: CrudService,
-    private alertCtrl: AlertController ) {
+  ///foto seleccionada a mostrar en imagen capturada
+  selectedPhotobase64="/assets/img/camera-icon.png";  
+  ///set imports
+  constructor(public fb: FormBuilder,private camera: Camera,private crud: CrudService,private alertCtrl: AlertController ) {
     //validadors and formcontrolname create Empleado
     this.Formcreateempleado = this.fb.group({ 
       email: ['', [Validators.required, Validators.email]], 
@@ -26,37 +25,31 @@ export class Tab2Page{
       lastname: ['', [Validators.required,Validators.maxLength(10)]]
     });
    }  
-  tomarfoto() {
-
+   ///funcio para tomar fotografia atravez de la camara
+  tomarfoto() { 
+    ///opciones de la camara
     const options: CameraOptions = {
+      //calidad
       quality: 100,
+      ////dimensiones de la fotografia
       targetHeight: 100,
       targetWidth: 100,
+      ///tipo de destino
       destinationType: this.camera.DestinationType.DATA_URL,
+      ///tipo de foto
       encodingType: this.camera.EncodingType.JPEG,
+      //definir que es una imagen
       mediaType: this.camera.MediaType.PICTURE
     }
-
+    //obtener imagen capturada
     this.camera.getPicture(options).then((imageData) => {  
+      ////obtener la foto
       this.selectedPhoto  = this.dataURItoBlob('data:image/jpeg;base64,' + imageData); 
       this.selectedPhotobase64='data:image/jpeg;base64,' + imageData;
     }, (err) => {
       console.log('error', err);
     });
-  }  
-  dataURItoBlob(dataURI) {
-      // codej adapted from:
-      //  http://stackoverflow.com/questions/33486352/
-      //cant-upload-image-to-aws-s3-from-ionic-camera
-          let binary = atob(dataURI.split(',')[1]);
-          let array = [];
-          for (let i = 0; i < binary.length; i++) {
-            array.push(binary.charCodeAt(i));
-          }
-          return new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
-  }; 
-
-
+  }   
   ///funcion para crear Empleado
   async crearempleado() { 
     //creo un objeto tipo Empleado para enviar a registro
@@ -68,12 +61,16 @@ export class Tab2Page{
       photo: this.selectedPhoto,
       objv:"0"
     };  
-    ///envio la informacion a registro
+    ///se envia la foto para almacenarla
     const subida=this.crud.subirfoto(this.selectedPhoto)
+    //se espera a la subida de la fotografia
     await subida.then(snapshot => { 
       snapshot.ref.getDownloadURL().then(async url => {  
+        ///se obtiene la url de la fotografia almacenada
         empleado.photo=url;
+        ///envio la informacion a registro
         await this.crud.registrarEmpleado(empleado).then(async result => { 
+          ///se muestra alerta de registro completo
           const alert = await this.alertCtrl.create({
             header: '¡Empleado registrado!', 
             message: `<b>Nombre:</b><br>${this.Formcreateempleado.value.name}<br><br>
@@ -81,20 +78,26 @@ export class Tab2Page{
             <b>Correo:</b><br>${this.Formcreateempleado.value.email}<br><br>`,
             buttons: ['OK'],
           });
+          ///se reinicia el formulario
           this.Formcreateempleado.reset();
           this.selectedPhoto="";
-          this.selectedPhotobase64="/assets/img/camera-icon.png"; 
+          this.selectedPhotobase64="/assets/img/camera-icon.png";
+          //se presenta la alerta 
           await alert.present();
         });
         });
       });
   }  
-  async presentAlert(mensaje) {
-    const alert = await this.alertCtrl.create({
-      header: 'img',
-      message: mensaje,
-      buttons: ['OK']
-    });
-    await alert.present();
-  }
+  ///funcion para convertir de datauri a BLOB
+  dataURItoBlob(dataURI) {
+    // codej adapted from:
+    //  http://stackoverflow.com/questions/33486352/
+    //cant-upload-image-to-aws-s3-from-ionic-camera
+        let binary = atob(dataURI.split(',')[1]);
+        let array = [];
+        for (let i = 0; i < binary.length; i++) {
+          array.push(binary.charCodeAt(i));
+        }
+        return new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
+}; 
 }

@@ -1,30 +1,68 @@
-import { Component, OnInit, ViewChild, ElementRef  } from '@angular/core'; 
-import { ChartDataSets } from 'chart.js';
-import { Color, Label } from 'ng2-charts';
-import { DatePipe } from '@angular/common';
-import { CrudService } from '../services/crud.service'  
-import { Empleado } from '../shared/Empleado'; 
+import { Component, OnInit, ViewChild, ElementRef  } from '@angular/core';  
+import { CrudService } from '../services/crud.service'   
 import { AlertController} from '@ionic/angular'; 
 import * as Chart from 'chart.js';
+import { ChartDataSets } from 'chart.js';
+import { Label, Color } from 'ng2-charts';
 @Component({
   selector: 'app-tab3',
   templateUrl: 'tab3.page.html',
   styleUrls: ['tab3.page.scss']
 })
-export class Tab3Page implements OnInit { 
-  @ViewChild('barCanvas', null) barCanvas: ElementRef;
-  barChart: Chart;
-  listaDeEmpleados = [];
-  nombres = [];
-  objetivos = [];
+export class Tab3Page implements OnInit {  
+  ///lista de empleados
+  listaEmpleados = [];  
+  // Data de grafica 1 serie
+  chartData: ChartDataSets[] = [
+    { data: [], label: 'Objetivo de ventas' }];
+  ///arreglo de labels que en este caso son los nomnbres de los empleados
+   chartLabels: Label[]; 
+// Options de la grafica
+  chartOptions = { 
+    responsive: true,
+    scaleShowVerticalLines:false,
+    ////titulo no mostrado
+    title: {
+      display: false,
+      text: 'Objetivo de venta por empleado'
+    },
+    pan: {
+      enabled: true,
+      mode: 'xy'
+    },
+    scales: {
+      yAxes: [{
+        ticks: {
+          beginAtZero: true
+        }
+      }]
+    }
+  };
+  ///color de la grafica
+  chartColors: Color[] = [ 
+    { 
+      borderColor: '#4498D6',
+      backgroundColor: '#4498D6',
+      pointBackgroundColor: '#4498D6'
+    }
+  ];
+  ///tipo de grafica bar
+  chartType = 'bar';
+  ///legenda visible
+  showLegend = true; 
+  //set imports
   constructor(public crud:CrudService,private alertCtrl: AlertController) { 
   }  
+  ///funcion de carga
   async ngOnInit() {
-    await this.cargarColeccion(); 
+    ///se obtienen los empleados
+    await this.cargarEmpleados(); 
   }
-  cargarColeccion() {
+  //funcion para obtener todos los actuales empleados y asi mismo se actualice automaticamente
+  cargarEmpleados() {
     this.crud.ObtenerEmpleados().subscribe((data) => {
-      this.listaDeEmpleados = data.map((e) => {
+      ///se guradan los empleados
+      this.listaEmpleados = data.map((e) => {
         return {
           key: e.payload.doc.id,
           name: e.payload.doc.data()['name'],
@@ -34,71 +72,17 @@ export class Tab3Page implements OnInit {
           objv: e.payload.doc.data()['objv'],
         };
       });
-      this.nombres = [];
-      this.objetivos = [];
-      this.listaDeEmpleados.forEach(empleado => {
-        this.nombres.push(empleado['name']);
-        this.objetivos.push(parseInt(empleado['objv']));
-      });
-      this.cargarGrafica(this.nombres, this.objetivos);
+      //se vacen los arreglos de informacion de la grafica
+      this.chartLabels = [];
+      this.chartData[0].data = [];
+      ///atravez de un for ech se obtiene la informacion del empleado para mostrarla en la grafica 
+      this.listaEmpleados.forEach(empleado => { 
+        ///se agrega la label 
+        this.chartLabels.push(empleado['name']+" "+empleado['lastname']);
+        ///se agrega el dato
+        this.chartData[0].data.push(parseInt(empleado['objv'])); 
+      }); 
     });
-  }
-  cargarGrafica(nombres, objetivos) {
-    if (this.barChart !== undefined) {
-      this.barChart.destroy();
-    }
-    this.barChart = new Chart(this.barCanvas.nativeElement, {
-      type: 'bar',
-      data: {
-        labels: nombres,
-        datasets: [
-          {
-            label: 'Objetivo de venta',
-            data: objetivos,
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.2)',
-              'rgba(54, 162, 235, 0.2)',
-              'rgba(255, 206, 86, 0.2)',
-              'rgba(75, 192, 192, 0.2)',
-              'rgba(153, 102, 255, 0.2)',
-              'rgba(255, 159, 64, 0.2)',
-            ],
-            borderColor: [
-              'rgba(255,99,132,1)',
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 206, 86, 1)',
-              'rgba(75, 192, 192, 1)',
-              'rgba(153, 102, 255, 1)',
-              'rgba(255, 159, 64, 1)',
-            ],
-            borderWidth: 1,
-            hoverBackgroundColor: [
-              '#FF6384',
-              '#36A2EB',
-              '#FFCE56',
-              '#FF6384',
-              '#36A2EB',
-              '#FFCE56',
-            ],
-          },
-        ],
-      },
-      options: {
-        legend: {
-          display: false,
-        },
-        maintainAspectRatio: false,
-        scales: {
-          yAxes: [
-            {
-              ticks: {
-                beginAtZero: true,
-              },
-            },
-          ],
-        },
-      },
-    });
-  }
+  } 
 
 }

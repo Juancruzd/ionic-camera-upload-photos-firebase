@@ -1,7 +1,7 @@
 <ion-header>
-    <ion-toolbar class="ios hydrated">
-    </ion-toolbar>
-</ion-header>
+  <ion-toolbar class="ios hydrated"> 
+  </ion-toolbar>
+</ion-header> 
 <ion-content>
     <ion-card>
       <ion-card-header>
@@ -12,30 +12,33 @@
       <ion-card-content>
         <ion-list>
           <ion-list-header>
-            Nombre
+            Nombre de empleado
           </ion-list-header>
           <ion-select placeholder="Seleccionar empleado" cancelText="Cancelar" interface="action-sheet"
-          #select (ionChange)="cargarImagen(select.value)">
-            <!-- AQUI SE LLENA DE FORMA DINAMICA POR TODOS LOS EMPLEADOS -->
+          #select (ionChange)="cargarImagen(select.value)"> 
+          <!--Se cicla el arreglo y se agregan los empleados-->
             <ion-select-option *ngFor="let empleado of listaDeEmpleados" value={{empleado.key}}>
               {{empleado.name}} {{empleado.lastname}}
             </ion-select-option>
-          </ion-select>
-  
-          <!-- FOTO DEL USUARIO -->
-          <ion-list-header>Fotografía</ion-list-header>
+          </ion-select>  
+           <!--Fotografia del empleado seleccionado-->
+          <ion-list-header>
+            Fotografía
+          </ion-list-header>
           <img [src]="empleadoSeleccionado.photo" alt="Foto del usuario" *ngIf="empleadoSeleccionado.photo"/>
+
+           <!--Objetivo de venta para actualizar-->
           <ion-list-header>
             Objetivo de venta
           </ion-list-header>
           <ion-item>
-            <ion-label position="floating">$</ion-label>
-            <!-- DONDE EL USUARIO INTRODUCE CANTIDAD DE VENTA ESPERADA -->
+            <ion-label position="floating">$</ion-label> 
             <ion-input clearInput type="number" [(ngModel)]="empleadoSeleccionado.objv"></ion-input>
           </ion-item>
         </ion-list>
-        <ion-button  expand="block"  shape="round" (click)="actualizarObjetivoDeVenta()">
-          Guardar
+           <!--Boton para actualizar el empleado--> 
+        <ion-button  expand="block"  shape="round" (click)="actualizarObjv()" color="primary">
+          Asignar
         </ion-button>
       </ion-card-content>
     </ion-card> 

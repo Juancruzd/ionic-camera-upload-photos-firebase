@@ -10,15 +10,22 @@ import { AlertController} from '@ionic/angular';
 
 export class Tab1Page implements OnInit{   
   empleadoSeleccionado: Empleado = new Empleado(); 
+  ////key o id del empleado
   idActual; 
+  ////lista de empleados
   listaDeEmpleados = [];
+  ///se agregan los imports
   constructor(public crud:CrudService,private alertCtrl: AlertController) { 
-  }  
+  }
+  ////funcion de carga  
   async ngOnInit() { 
-    this.cargarColeccion();  
+    ////obtener todos los empleados
+    this.cargarEmpleados();  
   }     
-  cargarColeccion() {
+  ////Funcion para obtener todos los empleados y  q automaticamente se actulice
+  cargarEmpleados() {
     this.crud.ObtenerEmpleados().subscribe((data) => {
+      ///ingreso los empleados
       this.listaDeEmpleados = data.map((e) => {
         return {
           key: e.payload.doc.id,
@@ -31,26 +38,35 @@ export class Tab1Page implements OnInit{
       });
     });
   }
+  ///evento de cambio en select que recibe la key del empleado
   cargarImagen(value) {
+    ///busqueda del usuario por key por medio del arreglo de la lista de empleados
     this.listaDeEmpleados.forEach((empleado) => {
+      //si se encuentra una coincidencia en la key con la lista de empleados
       if ( empleado['key'] === value) {
+        ///obtengo el empleado y lo guardo como seleccionado mostrando su fotografia
         this.empleadoSeleccionado = empleado;
+        ///obtenfo la key para actualizar
         this.idActual = empleado['key'];
       }
     });
   }
-  async actualizarObjetivoDeVenta() {
+  ///funcion para actualizar el objetivo de venta del empleado seleccionado
+  async actualizarObjv() {
+    ///se actualiza el empleado mandando el id y el empleado seleccionado
     this.crud.actualizarEmpleado(this.idActual, this.empleadoSeleccionado); 
-    
+    ///se muestra alerta
     const alert = await this.alertCtrl.create({
       header: 'Objetivo de venta',
       subHeader: `${this.empleadoSeleccionado.name} debe vender:`,
       message: `<b>\$</b>${this.empleadoSeleccionado.objv}`,
       buttons: ['OK'],
     });
+    ///se presenta alerta
     await alert.present();
+    ///se limpia formulario y se reinicia
     this.empleadoSeleccionado = new Empleado(); 
     this.listaDeEmpleados = null;
-    this.cargarColeccion();  
+    this.cargarEmpleados();  
   }
 }
