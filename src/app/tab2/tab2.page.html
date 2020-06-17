@@ -2,13 +2,37 @@
   <ion-toolbar class="ios hydrated"> 
   </ion-toolbar>
 </ion-header> 
-<ion-content>
-  <ion-grid padding="true" class="page-centered-element"  >
-    <ion-row>   
-    <button ion-button color="danger" type="button" full round large (click)="takePhoto()"> 
-  </button>
-  
-  <img class="img-responsive" src="{{ myPhotoURL }}" /> 
-    </ion-row>
-  </ion-grid>
+<ion-content>   
+      <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+            Registre un nuevo empleado
+        </ion-card-title> 
+      </ion-card-header>
+      <ion-card-content>
+      <form [formGroup]="Formcreateempleado" padding-right>
+        <ion-item>
+          <ion-label position="floating">Correo</ion-label>
+          <ion-input type="text" formControlName="email" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Nombre</ion-label>
+          <ion-input type="text" formControlName="name" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Apellido</ion-label>
+          <ion-input type="text" formControlName="lastname" required></ion-input>
+        </ion-item> 
+        <ion-item> 
+          <img [src]="selectedPhotobase64"  *ngIf="selectedPhotobase64" (click)="tomarfoto()"  style="width:200px;height: 200px;"/> 
+        </ion-item> 
+        <ion-button 
+          color="primary" 
+          expand="block"  
+          shape="round" 
+          [disabled]="!Formcreateempleado.valid" 
+          (click)="crearempleado()">Crear empleado</ion-button>
+      </form>
+      </ion-card-content>
+      </ion-card> 
 </ion-content>

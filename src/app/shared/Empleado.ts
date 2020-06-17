@@ -4,4 +4,5 @@ export class Empleado {
     name: string;
     lastname: string;
     photo: string;
+    objv: string;
 }

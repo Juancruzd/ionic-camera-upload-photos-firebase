@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { IonicModule, IonicRouteStrategy,LoadingController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 
@@ -16,16 +16,14 @@ import { environment } from './../environments/environment';
  
 import { AngularFirestoreModule } from '@angular/fire/firestore'; 
 import { AngularFireDatabaseModule } from '@angular/fire/database';
-import { AngularFireStorageModule } from '@angular/fire/storage';
-
+import { AngularFireStorageModule } from '@angular/fire/storage'; 
 
 import{HttpClientModule} from '@angular/common/http'
 import { ApiService } from './services/api.service'; 
 ////import  chartjs-plugin-zoom
 import 'chartjs-plugin-zoom';
-import { Camera } from '@ionic-native/camera/ngx'; 
-
-
+import { Camera } from '@ionic-native/camera/ngx';   
+import { AngularFirestore } from '@angular/fire/firestore'; 
 
 @NgModule({
   declarations: [AppComponent],
@@ -33,8 +31,7 @@ import { Camera } from '@ionic-native/camera/ngx';
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,
       //inicializar nuestra conexion o aplicacion de firebase con sus configuraciones
       AngularFireModule.initializeApp(environment.firebaseConfig),///configuration firebase
-      AngularFireAuthModule,///auth 
-      AngularFireAuthModule,///auth
+      AngularFireAuthModule,///auth  
       AngularFireDatabaseModule,///database
       AngularFirestoreModule, // imports firebase/firestore, only needed for database features
       AngularFireStorageModule, // imports firebase/storage only needed for storage features 
@@ -44,7 +41,8 @@ import { Camera } from '@ionic-native/camera/ngx';
     ApiService,////provider
     StatusBar,
     SplashScreen,
-    Camera,
+    Camera, 
+    AngularFirestore,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
