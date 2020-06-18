@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef  } from '@angular/core';   
+import { Component, OnInit} from '@angular/core';   
 import { CrudService } from '../services/crud.service'  
 import { Empleado } from '../shared/Empleado'; 
 import { AlertController} from '@ionic/angular'; 
@@ -39,7 +39,7 @@ export class Tab1Page implements OnInit{
     });
   }
   ///evento de cambio en select que recibe la key del empleado
-  cargarImagen(value) {
+  mostrarImagen(value) {
     ///busqueda del usuario por key por medio del arreglo de la lista de empleados
     this.listaDeEmpleados.forEach((empleado) => {
       //si se encuentra una coincidencia en la key con la lista de empleados

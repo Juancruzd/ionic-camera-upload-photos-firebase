@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef  } from '@angular/core';  
 import { CrudService } from '../services/crud.service'   
-import { AlertController} from '@ionic/angular'; 
-import * as Chart from 'chart.js';
+import { AlertController} from '@ionic/angular';  
 import { ChartDataSets } from 'chart.js';
 import { Label, Color } from 'ng2-charts';
 @Component({

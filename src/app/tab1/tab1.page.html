@@ -12,10 +12,10 @@
       <ion-card-content>
         <ion-list>
           <ion-list-header>
-            Nombre de empleado
+            Nombre del empleado
           </ion-list-header>
           <ion-select placeholder="Seleccionar empleado" cancelText="Cancelar" interface="action-sheet"
-          #select (ionChange)="cargarImagen(select.value)"> 
+          #select (ionChange)="mostrarImagen(select.value)"> 
           <!--Se cicla el arreglo y se agregan los empleados-->
             <ion-select-option *ngFor="let empleado of listaDeEmpleados" value={{empleado.key}}>
               {{empleado.name}} {{empleado.lastname}}
